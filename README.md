@@ -3,7 +3,9 @@
 
 ### 截图
 
-**左图：Android， 右图：iOS**  
+**截屏是ios平台的截屏，安卓端的类似**  
+![image](https://github.com/DevHuangjb/ReactNatvie_demo/blob/master/screenshot/screenshot1.gif)
+![image](https://github.com/DevHuangjb/ReactNatvie_demo/blob/master/screenshot/screenshot2.gif)
 
 ### 运行
 * 步骤一
