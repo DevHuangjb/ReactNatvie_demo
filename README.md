@@ -33,4 +33,4 @@ cd ReactNatvie_demo && npm install
 * 半官方插件react-navigation进行页面路由
 * 第三方react-native-image-picker读取相册
 
-##未完待续~~~
+## 未完待续~~~
