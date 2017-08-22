@@ -1,0 +1,259 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ * @flow
+ */
+
+import React, {Component} from 'react';
+import {
+    AppRegistry,
+    StyleSheet,
+    Text,
+    View,
+    Platform,
+    ListView,
+    TouchableOpacity,
+    AlertIOS,
+    ActivityIndicator,
+    RefreshControl
+} from 'react-native';
+
+
+import request from '../common/request'
+import config from '../common/config'
+import Item from './item'
+
+let cachedResults = {
+    nextPage:1,
+    items:[],
+    total:0
+}
+
+export default class List extends Component {
+
+    // 构造
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+            isLoadingTail:false,
+            isRefreshing:false
+        };
+    }
+
+    static navigationOptions = {
+        title: '视频列表',
+    };
+
+    componentDidMount() {
+
+        this.fetchData(1);
+
+    }
+
+    componentWillMount() {
+         // this.dsfetchData();//打底数据共3条
+    }
+
+    dsfetchData(){
+        this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(
+                [
+                    {
+                        "_id":"450000201111076177","thumb":"http://dummyimage.com/1280x720/a99343)","title":"@cparagraph(1, 3)","video":"http://v.youku.com/v_show/id_XMTczMDM0NzQ2OA==.html?f=26378220&spm=a2hww.20023042.m_223465.5~5~5~5!2~5~5~A.BZYRBN&from=y1.3-idx-beta-1519-23042.223465.4-1"
+                    }
+                    ,
+                    {
+                        "_id":"410000201207096642","thumb":"http://dummyimage.com/1280x720/afebb9)","title":"@cparagraph(1, 3)","video":"http://v.youku.com/v_show/id_XMTczMDM0NzQ2OA==.html?f=26378220&spm=a2hww.20023042.m_223465.5~5~5~5!2~5~5~A.BZYRBN&from=y1.3-idx-beta-1519-23042.223465.4-1"
+                    }
+                    ,
+                    {
+                        "_id":"210000201211100360","thumb":"http://dummyimage.com/1280x720/4564d3)","title":"@cparagraph(1, 3)","video":"http://v.youku.com/v_show/id_XMTczMDM0NzQ2OA==.html?f=26378220&spm=a2hww.20023042.m_223465.5~5~5~5!2~5~5~A.BZYRBN&from=y1.3-idx-beta-1519-23042.223465.4-1"
+                    }
+                ]
+
+            ),
+        });
+    }
+
+
+    fetchData(page) {
+        if(page!==0){
+
+            this.setState({
+                isLoadingTail:true
+            });
+
+        }else{
+
+            this.setState({
+                isRefreshing:true
+            });
+
+        }
+
+        request.get(config.api.base + config.api.list,{
+            accessToken:'jjjj',
+            page: page
+        }).then(
+            result => {
+                if (result.success){
+                    //把服务器得到的数据存到缓存里面
+                    let items = cachedResults.items.slice();
+                    if(page!==0){
+                        items = items.concat(result.data);
+                        cachedResults.nextPage +=1
+                    }else{
+                        items = result.data.concat(items)
+                    }
+                    cachedResults.items = items
+                    cachedResults.total = result.total
+                    //setTimeout(()=>{
+                        if(page!== 0){
+                            this.setState({
+                                dataSource:this.state.dataSource.cloneWithRows(
+                                    cachedResults.items
+                                ),
+                                isLoadingTail:false
+                            });
+                        }else{
+                            this.setState({
+                                dataSource:this.state.dataSource.cloneWithRows(
+                                    cachedResults.items
+                                ),
+                                isRefreshing:false
+                            });
+                        }
+                    //},2000);
+                }
+            }
+        ).catch(
+            error => {
+                if(page!== 0 ){
+                    this.setState({
+                        isLoadingTail:false
+                    });
+                }else{
+                    this.setState({
+                        isRefreshing:false
+                    });
+                }
+                console.log(error);
+            }
+        )
+
+    }
+
+    loadMoreData = () => {
+        if(!this.hasMoreData() || this.state.isLoadingTail){
+            return
+        }
+        let page = cachedResults.nextPage
+        this.fetchData(page)
+    }
+
+    onRefresh = () => {
+        if(!this.hasMoreData() || this.state.isRefreshing) {
+            return
+        }
+
+        this.fetchData(0)
+    }
+
+    hasMoreData(){
+        return cachedResults.items.length !== cachedResults.total
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <ListView
+                    style={styles.listView}
+                    dataSource={this.state.dataSource}
+                    renderRow={this.renderRow}
+                    onEndReached={this.loadMoreData}
+                    onEndReachedThreshold={20}
+                    renderFooter={this.renderFooter}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.isRefreshing}
+                            onRefresh={this.onRefresh}
+
+                        />
+                    }
+                />
+            </View>
+        );
+    }
+
+    renderFooter=()=>{
+        if(!this.hasMoreData() && cachedResults.total!== 0 ){
+            return (<View style={styles.loadingMore}>
+                <Text style={styles.loadingText}>没有更多数据啦...</Text>
+            </View>);
+        }
+
+        if(!this.state.isLoadingTail){
+            return <View style={styles.loadingMore}/>
+        }
+
+        return (
+
+            <ActivityIndicator
+                style={styles.loadingMore}
+            />
+
+        );
+    }
+
+    renderRow = (rowData) => {
+        return(
+        <TouchableOpacity
+            onPress={
+                ()=>{
+                    const { navigate } = this.props.navigation;
+                    navigate('Detail',{'rowData':rowData})
+                }
+            }
+        >
+            <Item
+                rowData = {rowData}
+            />
+        </TouchableOpacity>
+
+        );
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F5FCFF',
+    },
+    header: {
+        marginTop: Platform.OS === 'ios' ? 20 : 0,
+        paddingTop: 20,
+        paddingBottom: 10,
+        backgroundColor: '#ee735c'
+    },
+    headerText: {
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: 'center',
+        color: 'white',
+    },
+    listView: {
+
+    },
+    loadingMore:{
+
+        marginVertical:20
+    },
+    loadingText:{
+        fontSize:18,
+        color:'red',
+        textAlign:'center'
+    }
+
+});

@@ -1,0 +1,30 @@
+{
+  "name": "BabyShow",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "mockjs": "^1.0.1-beta3",
+    "query-string": "^4.3.4",
+    "react": "16.0.0-alpha.6",
+    "react-native": "0.44.0",
+    "react-native-button": "^2.0.0",
+    "react-native-image-picker": "^0.26.3",
+    "react-native-progress": "^3.2.1",
+    "react-native-vector-icons": "^4.1.1",
+    "react-native-video": "^1.0.0",
+    "react-navigation": "^1.0.0-beta.9"
+  },
+  "devDependencies": {
+    "babel-jest": "20.0.3",
+    "babel-preset-react-native": "1.9.2",
+    "jest": "20.0.3",
+    "react-test-renderer": "16.0.0-alpha.6"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
