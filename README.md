@@ -19,7 +19,7 @@ cd ReactNatvie_demo && npm install
     * **Anroid**  
         react-native run-android 
     * **iOS**  
-        进行ios目录下的GankCamp.xcodeproj文件（需提前安装好xcode）
+        react-native run-ios
     
 ### 使用到的技术点
 
