@@ -4,6 +4,7 @@
 ### 截图
 
 **截屏是ios平台的截屏，安卓端的类似**  
+
 ![image](https://github.com/DevHuangjb/ReactNatvie_demo/blob/master/screenshot/screenshot1.gif)
 ![image](https://github.com/DevHuangjb/ReactNatvie_demo/blob/master/screenshot/screenshot2.gif)
 
@@ -26,3 +27,8 @@ cd ReactNatvie_demo && npm install
 * React.js + JSX
 * ES6
 * mock模拟接口数据
+* AsyncStorage本地化存储数据
+* 第三方react-native-video播放线上视频
+* 字体图标的使用
+* 半官方插件react-navigation进行页面路由
+* 第三方react-native-image-picker读取相册
